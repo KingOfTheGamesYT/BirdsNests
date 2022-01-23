@@ -1,10 +1,10 @@
 modLoader="javafml"
-loaderVersion="[28,)"
-issueTrackerURL="https://github.com/KingOfTheGamesYT/BirdsNests"
+loaderVersion="[36,)"
+issueTrackerURL="https://github.com/cleverpanda/BirdsNests"
 
 [[mods]]
 modId="birdsnests"
-version="2.1.1"
+version="2.1.2"
 displayName="Birds Nests"
 # updateJSONURL="http://myurl.me/"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/birds-nests"
