@@ -1,7 +1,7 @@
 modLoader="javafml"
 loaderVersion="[36,)"
 issueTrackerURL="https://github.com/cleverpanda/BirdsNests"
-
+license="GNU LESSER GENERAL PUBLIC LICENSE"
 [[mods]]
 modId="birdsnests"
 version="2.1.2"
