@@ -15,7 +15,7 @@ public class DecayLeafEventHandler
 {
 
 	@SubscribeEvent
-	public void onDrops(BlockEvent.BreakEvent event)
+	public void onDrops(BlockEvent event)
 	{
 		Block theblock = event.getState().getBlock();
 		Random random = new Random();
