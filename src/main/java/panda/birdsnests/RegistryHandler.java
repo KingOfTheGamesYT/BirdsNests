@@ -1,23 +1,19 @@
 package panda.birdsnests;
 
-import net.minecraft.item.Item;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ObjectHolder;
+import net.minecraft.world.item.Item;
 
-@ObjectHolder(BirdsNests.MODID)
-@Mod.EventBusSubscriber(modid = BirdsNests.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 public class RegistryHandler
 {
-    public static Item BIRDSNEST = new ItemNest("nest");
+    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, BirdsNests.MODID);
+    public static final RegistryObject<Item> BIRDSNEST = ITEMS.register("nest", ItemNest::new);
 
-    @SubscribeEvent
-    public static void onItemRegistry(RegistryEvent.Register<Item> event)
-    {
-        event.getRegistry().register(RegistryHandler.BIRDSNEST);
-
+    public static void init(IEventBus modEventBus) {
+        // Register all deferred registers with the mod event bus
+        ITEMS.register(modEventBus);
     }
-
 }
