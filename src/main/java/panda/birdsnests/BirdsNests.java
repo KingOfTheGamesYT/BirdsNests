@@ -1,6 +1,7 @@
 package panda.birdsnests;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -12,24 +13,20 @@ import net.minecraftforge.fml.loading.FMLPaths;
 public class BirdsNests {
 
 	public static final String MODID = "birdsnests";
-	public static double nestRarity = 40;
 	public static boolean allowStacking = false;
 	public static int nestStackSize = 64;
-	public static double decayDropModifier = 1.25F;
-	public static boolean allowDecayDrops = true;
 
 	public BirdsNests()
 	{
-		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_CONFIG);
+		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.COMMON_CONFIG);
-		Config.loadConfig(Config.CLIENT_CONFIG, FMLPaths.CONFIGDIR.get().resolve("birdsnests-client.toml"));
 		Config.loadConfig(Config.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve("birdsnests-common.toml"));
 		setSettings();
+		RegistryHandler.init(modEventBus);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
 		MinecraftForge.EVENT_BUS.register(new HarvestLeafEventHandler());
 		MinecraftForge.EVENT_BUS.register(new DecayLeafEventHandler());
 	}
-
 
 	private void setup(final FMLCommonSetupEvent event)
 	{}
@@ -37,7 +34,6 @@ public class BirdsNests {
 	private static void setSettings()
 	{
 		BirdsNests.allowStacking = Config.allowStacking.get();
-		BirdsNests.allowDecayDrops = Config.allowDecayDrops.get();
 
 		if(BirdsNests.allowStacking == false)
 		{
@@ -48,7 +44,4 @@ public class BirdsNests {
 			BirdsNests.nestStackSize = 64;
 		}
 	}
-
 }
-
-
