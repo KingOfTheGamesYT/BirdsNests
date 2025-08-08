@@ -1,13 +1,13 @@
 package panda.birdsnests;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.event.world.BlockEvent;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+
+import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.Random;
@@ -24,15 +24,14 @@ public class HarvestLeafEventHandler {
 		double d1 = random.nextFloat() * 0.5D +0.25D;
 		double d2 = random.nextFloat() * 0.5D +0.25D;
 
-		if (theblock.isIn(BlockTags.LEAVES))
+		if (theblock.defaultBlockState().is(BlockTags.LEAVES))
 		{
 			if(random.nextInt(Config.nestRarity.get()) == 0){
 
-				ItemStack stack = new ItemStack(RegistryHandler.BIRDSNEST,1);
-				ItemEntity entityitem = new ItemEntity((ServerWorld) event.getWorld(), pos.getX()+d0, pos.getY()+d1, pos.getZ()+d2, stack);
-				event.getWorld().addEntity(entityitem);
+				ItemStack stack = new ItemStack(RegistryHandler.BIRDSNEST.get(),1);
+				ItemEntity entityitem = new ItemEntity((ServerLevel) event.getLevel(), pos.getX()+d0, pos.getY()+d1, pos.getZ()+d2, stack);
+				event.getLevel().addFreshEntity(entityitem);
 			}
 		}
 	}
 }
- 
