@@ -1,6 +1,8 @@
 package panda.birdsnests;
 
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -23,6 +25,7 @@ public class BirdsNests {
 		Config.loadConfig(Config.COMMON_CONFIG, FMLPaths.CONFIGDIR.get().resolve("birdsnests-common.toml"));
 		setSettings();
 		RegistryHandler.init(modEventBus);
+		modEventBus.addListener(this::addCreative);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
 		MinecraftForge.EVENT_BUS.register(new HarvestLeafEventHandler());
 		MinecraftForge.EVENT_BUS.register(new DecayLeafEventHandler());
@@ -42,6 +45,13 @@ public class BirdsNests {
 		else
 		{
 			BirdsNests.nestStackSize = 64;
+		}
+	}
+
+	private void addCreative(BuildCreativeModeTabContentsEvent event) {
+		if(event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
+			event.accept(RegistryHandler.BIRDSNEST);
+
 		}
 	}
 }

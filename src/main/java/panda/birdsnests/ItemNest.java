@@ -30,7 +30,6 @@ public class ItemNest extends Item
 	{
 		super(new Item.Properties()
 				.stacksTo(BirdsNests.nestStackSize)
-				//.group(ItemGroup.MISC)
 		);
 	}
 
