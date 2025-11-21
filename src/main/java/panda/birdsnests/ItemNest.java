@@ -7,18 +7,16 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.*;
 import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class ItemNest extends Item
 {
-	private static final ResourceLocation LOOT_TABLE = new ResourceLocation("birdsnests:nest_loot");
-
 
 	public ItemNest(String name)
 	{
@@ -42,37 +40,97 @@ public class ItemNest extends Item
 		{
 			this.generateLoot(worldIn,playerIn);
 		}
-
 		return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
 	}
 
+    private ItemStack generateConfigLoot(PlayerEntity player) {
+        Random rand = player.world.rand;
 
+        class Entry {
+            Item item;
+            int min;
+            int max;
+            float weight; // chance = weight
 
+            Entry(Item i, int mn, int mx, float w) {
+                item = i;
+                min = mn;
+                max = mx;
+                weight = w;
+            }
+        }
 
+        List<Entry> entries = new ArrayList<>();
+        float totalWeight = 0f;
 
-	private void generateLoot(World world,PlayerEntity player)
-	{
-		if (LOOT_TABLE == LootTables.EMPTY)
-		{
-		}
-		else
-		{
-			BlockPos playerPos = new BlockPos(player.getPosX(), player.getPosY(), player.getPosZ());
+        for (String entry : Config.nestLootEntries.get()) {
+            try {
+                if (entry == null || entry.trim().isEmpty()) continue;
 
-			LootTable loottable = ServerLifecycleHooks.getCurrentServer().getLootTableManager().getLootTableFromLocation(LOOT_TABLE);
-			LootContext lootcontext = (new LootContext.Builder(player.getServer().func_241755_D_())).withParameter(LootParameters.THIS_ENTITY, player).withParameter(LootParameters.ORIGIN, player.getPositionVec()).withRandom(player.getRNG()).withLuck(player.getLuck()).build(LootParameterSets.GIFT);
+                String[] parts = entry.split(",");
+                if (parts.length < 3) continue;
 
+                ResourceLocation id = new ResourceLocation(parts[0].trim());
+                Item item = ForgeRegistries.ITEMS.getValue(id);
+                if (item == null) continue;
 
-			List<ItemStack> itemstacklist = loottable.generate(lootcontext);
+                String countPart = parts[1].trim();
+                int min, max;
 
-			for (ItemStack itemstack : itemstacklist)
-			{
-				ItemEntity entityitem = new ItemEntity(world, player.getPosX(), player.getPosY() + 1.5D, player.getPosZ(), itemstack);
-				world.addEntity(entityitem);
-			}
-		}
-	}
+                if (countPart.contains("-")) {
+                    String[] r = countPart.split("-");
+                    min = Integer.parseInt(r[0].trim());
+                    max = Integer.parseInt(r[1].trim());
+                } else {
+                    min = max = Integer.parseInt(countPart.trim());
+                }
 
-	//LootContext lootcontext = (new LootContext.Builder(player.getServerWorld())).withParameter(LootParameters.THIS_ENTITY, player).withParameter(LootParameters.ORIGIN, player.getPositionVec()).withRandom(player.getRNG()).withLuck(player.getLuck()).build(LootParameterSets.ADVANCEMENT);
+                float weight = Float.parseFloat(parts[2].trim());
+                if (weight <= 0f) continue;
 
-}
+                entries.add(new Entry(item, min, max, weight));
+                totalWeight += weight;
+
+            } catch (Exception e) {
+                System.out.println("[BirdsNests] Bad loot entry: " + entry);
+            }
+        }
+
+        // If no loot defined properly
+        if (entries.isEmpty()) return ItemStack.EMPTY;
+
+        // Weighted random roll using chance as weight
+        float r = rand.nextFloat() * totalWeight;
+        Entry chosen = null;
+
+        for (Entry e : entries) {
+            r -= e.weight;
+            if (r <= 0f) {
+                chosen = e;
+                break;
+            }
+        }
+
+        // Shouldn't happen, but safety
+        if (chosen == null) return ItemStack.EMPTY;
+
+        // Generate amount
+        int amount = chosen.min + rand.nextInt(chosen.max - chosen.min + 1);
+        return new ItemStack(chosen.item, amount);
+    }
+
+    private void generateLoot(World world, PlayerEntity player) {
+        ItemStack result = generateConfigLoot(player);
+
+        if (!result.isEmpty()) {
+            ItemEntity drop = new ItemEntity(
+                    world,
+                    player.getPosX(),
+                    player.getPosY() + 1.5D,
+                    player.getPosZ(),
+                    result
+            );
+            world.addEntity(drop);
+        }
+    }
+    }
