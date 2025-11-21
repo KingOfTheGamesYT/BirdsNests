@@ -12,10 +12,8 @@ import net.minecraftforge.fml.loading.FMLPaths;
 public class BirdsNests {
 
 	public static final String MODID = "birdsnests";
-	public static double nestRarity = 40;
 	public static boolean allowStacking = false;
 	public static int nestStackSize = 64;
-	public static double decayDropModifier = 1.25F;
 	public static boolean allowDecayDrops = true;
 
 	public BirdsNests()
@@ -29,7 +27,6 @@ public class BirdsNests {
 		MinecraftForge.EVENT_BUS.register(new HarvestLeafEventHandler());
 		MinecraftForge.EVENT_BUS.register(new DecayLeafEventHandler());
 	}
-
 
 	private void setup(final FMLCommonSetupEvent event)
 	{}
@@ -48,7 +45,4 @@ public class BirdsNests {
 			BirdsNests.nestStackSize = 64;
 		}
 	}
-
 }
-
-
