@@ -20,14 +20,12 @@ public class Config
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final ForgeConfigSpec.Builder COMMON_BUILDER = new ForgeConfigSpec.Builder();
-    private static final ForgeConfigSpec.Builder CLIENT_BUILDER = new ForgeConfigSpec.Builder();
     public static ForgeConfigSpec COMMON_CONFIG;
-    public static ForgeConfigSpec CLIENT_CONFIG;
     public static final String CATEGORY_GENERAL = "general";
     public static ForgeConfigSpec.BooleanValue allowStacking;
     public static ForgeConfigSpec.BooleanValue allowDecayDrops;
     public static ForgeConfigSpec.IntValue nestRarity;
-    public static ForgeConfigSpec.IntValue decayDropModifier;
+    public static ForgeConfigSpec.DoubleValue decayDropModifier;
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> nestLootEntries;
 
     static
@@ -43,8 +41,8 @@ public class Config
                 .define("ALLOW_STACKING", false);
 
         decayDropModifier = COMMON_BUILDER
-                .comment("This makes nests more (or less ) rare from decaying leaves. Leave at 1 for no change. [range: 0 ~ 1000, default: 1]")
-                .defineInRange("NEST_DECAY_DROP_MULTIPLIER", 1, 0, 1000);
+                .comment("This makes nests more (or less) rare from decaying leaves. Leave at 1 for no change. [range: 0.0 ~ 1000.0, default: 1.25]")
+                .defineInRange("NEST_DECAY_DROP_MULTIPLIER", 1.25, 0.0, 1000.0);
 
         allowDecayDrops = COMMON_BUILDER
                 .comment("Allows to enable/disable nests dropping from decaying leaves [default: true]")
@@ -83,7 +81,6 @@ public class Config
         COMMON_BUILDER.pop();
 
         COMMON_CONFIG = COMMON_BUILDER.build();
-        CLIENT_CONFIG = CLIENT_BUILDER.build();
     }
 
     public static void loadConfig(ForgeConfigSpec spec, Path path)
