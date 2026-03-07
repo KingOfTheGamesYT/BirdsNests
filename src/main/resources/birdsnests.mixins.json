@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "refmap": "birdsnests.refmap.json",
+  "package": "panda.birdsnests.mixins",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "LeavesDecayMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

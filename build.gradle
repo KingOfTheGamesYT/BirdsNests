@@ -6,6 +6,8 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath 'org.spongepowered:mixingradle:0.7.+'
+
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
@@ -13,10 +15,8 @@ apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
+apply plugin: 'org.spongepowered.mixin'
 
-
-
-//version = "${mc_version}-${bnt_version}"
 group = 'panda.birdnests'
 archivesBaseName = 'BirdsNests-' + "${mc_version}-${bnt_version}"
 
@@ -26,14 +26,14 @@ minecraft {
     mappings channel: 'snapshot', version: '20210309-1.16.5'
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
-
     runs {
         client {
             workingDirectory project.file('run')
 
             // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
@@ -49,12 +49,14 @@ minecraft {
 
             // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                birdsneststres {
+                birdsnests {
                     source sourceSets.main
                 }
             }
@@ -69,10 +71,10 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
-            args '--mod', 'birdsneststres', '--all', '--output', file('src/generated/resources/')
+            args '--mod', 'birdsnests', '--all', '--output', file('src/generated/resources/')
 
             mods {
-                birdsneststres {
+                birdsnests {
                     source sourceSets.main
                 }
             }
@@ -80,12 +82,16 @@ minecraft {
     }
 }
 
-dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.5-36.2.20'
-
+mixin {
+    add sourceSets.main, "birdsnests.refmap.json"
+    config "birdsnests.mixins.json"
 }
 
-// Example for how to get properties into the manifest for reading by the runtime..
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.16.5-36.2.20'
+    annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
+}
+
 jar {
     manifest {
         attributes([
@@ -95,15 +101,12 @@ jar {
                 "Implementation-Title": project.name,
                 "Implementation-Version": "${version}",
                 "Implementation-Vendor" :"Panda",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "MixinConfigs": "birdsnests.mixins.json"
         ])
     }
 }
 
-// Example configuration to allow publishing using the maven-publish task
-// we define a custom artifact that is sourced from the reobfJar output task
-// and then declare that to be published
-// Note you'll need to add a repository here
 def reobfFile = file("$buildDir/reobfJar/output.jar")
 def reobfArtifact = artifacts.add('default', reobfFile) {
     type 'jar'

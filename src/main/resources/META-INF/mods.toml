@@ -13,4 +13,6 @@ authors="Cleverpanda714 for all the versions below 1.14.4 and RedRoseWarrior for
 
 description='''
 pseudo-random reward events from chopping trees'''
+[[mixins]]
+config="birdsnests.mixins.json"
 
