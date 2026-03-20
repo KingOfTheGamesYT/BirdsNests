@@ -36,10 +36,20 @@ public class DecayLeafEventHandler {
 		// ✅ Respect config
 		if (!Config.allowDecayDrops.get()) return;
 
+        double rarity = Config.nestRarity.get();
+        double modifier = Config.decayDropModifier.get();
+
+        if (rarity <= 0D || modifier <= 0D) {
+            LOGGER.warn("Invalid rarity or decay modifier (<= 0)");
+            return;
+        }
+
+        float chance = (float)(1.0D / (rarity * modifier));
+
 		LootPool pool = LootPool.lootPool()
 				.setRolls(ConstantValue.exactly(1))
-				.when(LootItemRandomChanceCondition.randomChance(1.0F / Config.decayDropModifier.get()))
-				.add(LootItem.lootTableItem(RegistryHandler.BIRDSNEST.get()))
+                .when(LootItemRandomChanceCondition.randomChance(chance))
+                .add(LootItem.lootTableItem(RegistryHandler.BIRDSNEST.get()))
 				.build();
 
 		event.getTable().addPool(pool);

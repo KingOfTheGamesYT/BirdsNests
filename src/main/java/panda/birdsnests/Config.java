@@ -24,14 +24,14 @@ public class Config {
     public static ForgeConfigSpec.BooleanValue allowStacking;
     public static ForgeConfigSpec.BooleanValue allowDecayDrops;
     public static ForgeConfigSpec.IntValue nestRarity;
-    public static ForgeConfigSpec.IntValue decayDropModifier;
+    public static ForgeConfigSpec.DoubleValue decayDropModifier;
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> nestLootEntries;
 
     static {
         COMMON_BUILDER.comment("Bird Nest Settings").push(CATEGORY_GENERAL);
         nestRarity = COMMON_BUILDER.comment("[range: 0 ~ 1000, default: 40]").defineInRange("NEST_DROP_RARITY", 40, 0, 1000);
         allowStacking = COMMON_BUILDER.comment("Allows to enable/disable nests stacking [default: false]").define("ALLOW_STACKING", false);
-        decayDropModifier = COMMON_BUILDER.comment("This makes nests more (or less ) rare from decaying leaves. Leave at 1 for no change. [range: 0 ~ 1000, default: 4]").defineInRange("NEST_DECAY_DROP_MULTIPLIER", 4, 0, 1000);
+        decayDropModifier = COMMON_BUILDER.comment("This makes nests more (or less) rare from decaying leaves. Leave at 1 for no change. [range: 0.0 ~ 1000.0, default: 1.25]").defineInRange("NEST_DECAY_DROP_MULTIPLIER", 1.25, 0.0, 1000.0);
         allowDecayDrops = COMMON_BUILDER.comment("Allows to enable/disable nests dropping from decaying leaves [default: true]").define("ALLOW_DECAY_DROPS", true);
         nestLootEntries = COMMON_BUILDER
                 .comment("Loot entries for bird nests. Format: item_id, count, chance")
@@ -66,7 +66,6 @@ public class Config {
                 );
 
         COMMON_BUILDER.pop();
-
         COMMON_CONFIG = COMMON_BUILDER.build();
     }
 
