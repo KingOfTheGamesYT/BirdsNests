@@ -1,6 +1,7 @@
 package panda.birdsnests;
 
 import net.minecraft.item.Item;
+
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -17,7 +18,5 @@ public class RegistryHandler
     public static void onItemRegistry(RegistryEvent.Register<Item> event)
     {
         event.getRegistry().register(RegistryHandler.BIRDSNEST);
-
     }
-
 }
